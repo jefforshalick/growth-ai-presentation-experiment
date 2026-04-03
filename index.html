@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeff Orshalick — Staff Growth Product Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0F0E0D;
+      --surface:      #1A1917;
+      --surface2:     #222120;
+      --text:         #F0EDE6;
+      --muted:        #7A7672;
+      --accent:       #E8C547;
+      --border:       #2C2B28;
+      --nav-w:        260px;
+      --font:         'DM Sans', system-ui, sans-serif;
+      --font-display: 'Cormorant', Georgia, serif;
+      --font-mono:    'DM Mono', monospace;
+      --font-number:  'Bebas Neue', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Grain Texture ─────────────────────────────── */
+    .grain {
+      position: fixed;
+      inset: -50%;
+      width: 200%;
+      height: 200%;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.028;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      animation: grain-shift 0.5s steps(1) infinite;
+    }
+    @keyframes grain-shift {
+      0%   { transform: translate(0, 0); }
+      10%  { transform: translate(-2%, -3%); }
+      20%  { transform: translate(3%, 1%); }
+      30%  { transform: translate(-1%, 4%); }
+      40%  { transform: translate(4%, -2%); }
+      50%  { transform: translate(-3%, 3%); }
+      60%  { transform: translate(2%, -4%); }
+      70%  { transform: translate(-4%, 1%); }
+      80%  { transform: translate(1%, 3%); }
+      90%  { transform: translate(3%, -1%); }
+      100% { transform: translate(-2%, 2%); }
+    }
+
+    /* ── Ambient Glow ──────────────────────────────── */
+    @keyframes ambientDrift {
+      0%   { transform: translate(0, 0); }
+      30%  { transform: translate(8vw, -5vh); }
+      65%  { transform: translate(-6vw, 8vh); }
+      100% { transform: translate(0, 0); }
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: -20vw;
+      background: radial-gradient(ellipse at center, rgba(232, 197, 71, 0.12) 0%, transparent 48%);
+      animation: ambientDrift 32s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Left Nav ─────────────────────────────────── */
+    nav {
+      width: var(--nav-w);
+      min-width: var(--nav-w);
+      height: 100vh;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 32px 0;
+      overflow-y: auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .nav-identity {
+      padding: 0 24px 28px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-identity .name {
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .nav-identity .role {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .nav-sections {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .nav-group {
+      margin-bottom: 4px;
+    }
+
+    .nav-group-label {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 12px 24px 6px;
+      opacity: 0.6;
+    }
+
+    .nav-item {
+      display: block;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+      padding: 7px 24px 7px 28px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+      user-select: none;
+      letter-spacing: 0.01em;
+    }
+
+    .nav-item:hover {
+      color: var(--text);
+      background: var(--surface2);
+    }
+
+    .nav-item.active {
+      color: var(--accent);
+      border-left-color: var(--accent);
+      background: rgba(232, 197, 71, 0.06);
+      font-weight: 500;
+    }
+
+    body.secureframe-active .nav-item.active {
+      color: #4D80E8;
+      border-left-color: #4D80E8;
+      background: rgba(77, 128, 232, 0.06);
+    }
+
+    .nav-item.top-level {
+      font-size: 13px;
+      font-weight: 500;
+      padding-left: 24px;
+    }
+
+    .nav-item.sub {
+      padding-left: 38px;
+      font-size: 12.5px;
+    }
+
+    .nav-footer {
+      padding: 20px 24px 0;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Content Area ─────────────────────────────── */
+    main {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    section {
+      min-height: 100vh;
+      padding: 80px 72px 80px 72px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* immediately show first section */
+    section:first-child {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── Section: Overview ────────────────────────── */
+    .kicker {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .kicker::before {
+      content: '';
+      display: inline-block;
+      width: 24px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.6;
+    }
+
+    .display-headline {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 6.5vw, 88px);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      line-height: 1.0;
+      color: var(--text);
+      margin-bottom: 32px;
+      max-width: 760px;
+    }
+
+    .display-headline em {
+      font-style: italic;
+      color: var(--accent);
+      font-weight: 300;
+    }
+
+    .lead {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: var(--text);
+      max-width: 560px;
+      margin-bottom: 48px;
+      opacity: 0.8;
+      letter-spacing: 0.01em;
+    }
+
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      max-width: 640px;
+      margin-bottom: 48px;
+    }
+
+    .meta-cell {
+      background: var(--surface);
+      padding: 20px 24px;
+    }
+
+    .meta-cell .label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .meta-cell .value {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .ai-callout {
+      border-left: 1px solid var(--accent);
+      padding: 20px 28px;
+      background: rgba(232, 197, 71, 0.03);
+      max-width: 600px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text);
+      opacity: 0.9;
+      position: relative;
+    }
+    .ai-callout::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -1px;
+      width: 1px;
+      height: 32px;
+      background: var(--accent);
+    }
+
+    .ai-callout strong {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* ── Section: Case Study Shell ────────────────── */
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+
+    .case-headline {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4.5vw, 60px);
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      line-height: 1.08;
+      color: var(--text);
+      margin-bottom: 24px;
+      max-width: 760px;
+    }
+
+    .case-hook {
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--text);
+      max-width: 620px;
+      opacity: 0.85;
+      margin-bottom: 40px;
+    }
+
+    .role-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .chip {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 2px;
+    }
+
+    .chip.highlight {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── Section sub-headers ──────────────────────── */
+    .sub-section {
+      margin-bottom: 64px;
+    }
+
+    .sub-section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .star-tag {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(232, 197, 71, 0.4);
+      padding: 3px 10px;
+      background: rgba(232, 197, 71, 0.06);
+    }
+
+    .sub-headline {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .body-text {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text);
+      opacity: 0.85;
+      max-width: 640px;
+      margin-bottom: 20px;
+    }
+
+    .body-text strong {
+      font-weight: 600;
+      color: var(--text);
+      opacity: 1;
+    }
+
+    /* ── Screenshot Cards ─────────────────────────── */
+    .screenshot-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .screenshot-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .screenshot-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .screenshot-grid.cols-1 { grid-template-columns: 1fr; max-width: 800px; }
+
+    .screenshot-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      cursor: zoom-in;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .screenshot-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .screenshot-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .screenshot-caption {
+      padding: 10px 16px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      opacity: 0.7;
+    }
+
+    /* ── Metrics ──────────────────────────────────── */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      max-width: 700px;
+      margin: 32px 0;
+    }
+
+    .metric-cell {
+      background: var(--surface);
+      padding: 28px 24px;
+    }
+
+    .metric-number {
+      font-family: var(--font-number);
+      font-size: 56px;
+      letter-spacing: 0.02em;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    /* ── Pull quote ───────────────────────────────── */
+    .pull-quote {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2.5vw, 28px);
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.45;
+      color: var(--text);
+      border-left: 1px solid var(--accent);
+      padding: 16px 28px;
+      max-width: 620px;
+      margin: 36px 0;
+      opacity: 0.9;
+    }
+
+    /* ── Closing section ──────────────────────────── */
+    .closing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 760px;
+    }
+
+    .closing-col .label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .closing-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .closing-col ul li {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--text);
+      opacity: 0.85;
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .closing-col ul li::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 400;
+    }
+
+    /* ── Lightbox ─────────────────────────────────── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 9, 8, 0.92);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+      backdrop-filter: blur(4px);
+    }
+
+    #lightbox.open { display: flex; }
+
+    #lightbox img {
+      max-width: 90vw;
+      max-height: 90vh;
+      object-fit: contain;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8);
+    }
+
+    /* ── Keyboard hint ────────────────────────────── */
+    .kbd-hint {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      z-index: 100;
+      opacity: 0.45;
+    }
+
+    kbd {
+      font-family: var(--font-mono);
+      display: inline-block;
+      padding: 2px 6px;
+      border: 1px solid var(--border);
+      font-size: 10px;
+      background: var(--surface);
+      color: var(--muted);
+    }
+
+    /* ── Divider ──────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 48px 0;
+      max-width: 640px;
+    }
+
+    /* ── Process list ─────────────────────────────── */
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      max-width: 640px;
+      border: 1px solid var(--border);
+    }
+
+    .process-item {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .process-item:last-child { border-bottom: none; }
+
+    .process-num {
+      min-width: 52px;
+      padding: 20px 16px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      border-right: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      opacity: 0.8;
+    }
+
+    .process-content {
+      padding: 20px 28px;
+      flex: 1;
+    }
+
+    .process-content .process-title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      margin-bottom: 6px;
+      letter-spacing: -0.01em;
+    }
+
+    .process-content .process-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    /* ── Presentation Mode ────────────────────────── */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    body.presentation-mode nav { display: none; }
+    body.presentation-mode main { overflow: hidden; }
+
+    body.presentation-mode::after {
+      content: '';
+      position: fixed;
+      inset: -20vw;
+      background:
+        radial-gradient(ellipse at center, rgba(232, 197, 71, 0.12) 0%, transparent 48%),
+        var(--bg);
+      animation: ambientDrift 32s ease-in-out infinite;
+      z-index: 49;
+    }
+
+    body.presentation-mode section {
+      min-height: unset;
+      padding: 0;
+      border: none;
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    body.presentation-mode [data-slide] {
+      position: fixed;
+      inset: 0;
+      display: none;
+      overflow-y: auto;
+      padding: 72px 120px;
+      align-items: center;
+      justify-content: flex-start;
+      background: transparent;
+      z-index: 50;
+    }
+
+    body.presentation-mode [data-slide].slide-active {
+      display: flex;
+      flex-direction: column;
+      animation: slideIn 0.3s ease;
+    }
+
+    body.presentation-mode [data-slide].slide-active > * {
+      max-width: 960px;
+      width: 100%;
+    }
+
+    .present-btn {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 300;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 7px 16px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--surface);
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .present-btn:hover {
+      color: var(--accent);
+      border-color: rgba(232, 197, 71, 0.4);
+      background: rgba(232, 197, 71, 0.04);
+    }
+
+    .slide-counter {
+      display: none;
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      z-index: 300;
+    }
+
+    body.presentation-mode .slide-counter { display: block; }
+    body.presentation-mode .kbd-hint { display: none; }
+
+    .slide-nav-btn {
+      display: none;
+      position: fixed;
+      bottom: 18px;
+      z-index: 300;
+      font-family: var(--font);
+      font-size: 16px;
+      padding: 6px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .slide-nav-btn:hover { color: var(--text); border-color: var(--muted); }
+    .slide-nav-btn.prev { left: 24px; }
+    .slide-nav-btn.next { right: 24px; }
+    body.presentation-mode .slide-nav-btn { display: block; }
+
+    /* ── Presentation Mode: Full content, no overrides ── */
+
+    /* ── Secureframe Theme ────────────────────────── */
+    #sf-hook, #sf-situation, #sf-action, #sf-result {
+      --accent:  #4D80E8;
+      --accent-glow: rgba(77, 128, 232, 0.08);
+    }
+
+    #sf-hook .chip.highlight,
+    #sf-situation .chip.highlight,
+    #sf-action .chip.highlight,
+    #sf-result .chip.highlight {
+      background: rgba(77, 128, 232, 0.15);
+      color: #4D80E8;
+      border-color: rgba(77, 128, 232, 0.3);
+    }
+
+    body.secureframe-active::before {
+      background: radial-gradient(ellipse at center, rgba(77, 128, 232, 0.10) 0%, transparent 48%);
+    }
+
+    body.presentation-mode.secureframe-active::after {
+      background:
+        radial-gradient(ellipse at center, rgba(77, 128, 232, 0.10) 0%, transparent 48%),
+        var(--bg);
+    }
+
+    /* ── Green Theme (Overview + Closing) ───────── */
+    #overview, #closing {
+      --accent: #52B788;
+    }
+
+    body.closing-active::before {
+      background: radial-gradient(ellipse at center, rgba(82, 183, 136, 0.10) 0%, transparent 48%);
+    }
+
+    body.presentation-mode.closing-active::after {
+      background:
+        radial-gradient(ellipse at center, rgba(82, 183, 136, 0.10) 0%, transparent 48%),
+        var(--bg);
+    }
+
+    body.closing-active .nav-item.active {
+      color: #52B788;
+      border-left-color: #52B788;
+      background: rgba(82, 183, 136, 0.06);
+    }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ── Ownership Table ──────────────────────────── */
+    .ownership-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 28px;
+      font-size: 14px;
+    }
+
+    .ownership-table th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0 16px 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .ownership-table td {
+      padding: 12px 16px 12px 0;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .ownership-table td:first-child {
+      font-weight: 500;
+      color: var(--accent);
+      white-space: nowrap;
+      width: 160px;
+    }
+
+    .ownership-table tr:last-child td { border-bottom: none; }
+
+    body.presentation-mode .ownership-table { font-size: 16px; }
+    body.presentation-mode .ownership-table td { padding: 14px 20px 14px 0; }
+
+    /* ── Culture Cube Demo ────────────────────────── */
+    .cube-demo {
+      margin-top: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 36px;
+      max-width: 560px;
+    }
+
+    .cube-demo input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .cd-controls { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+    .cd-group-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .cd-btn-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .cd-btn {
+      font-family: var(--font); font-size: 11px; font-weight: 500; letter-spacing: 0.06em;
+      text-transform: uppercase; padding: 5px 12px; border: 1px solid var(--border);
+      color: var(--muted); cursor: pointer; display: inline-block; user-select: none;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+    .cd-btn:hover { color: var(--text); border-color: var(--muted); }
+
+    #cd-front:checked ~ .cd-controls label[for="cd-front"],
+    #cd-left:checked ~ .cd-controls label[for="cd-left"],
+    #cd-right:checked ~ .cd-controls label[for="cd-right"],
+    #cd-top:checked ~ .cd-controls label[for="cd-top"],
+    #cd-bottom:checked ~ .cd-controls label[for="cd-bottom"],
+    #cd-back:checked ~ .cd-controls label[for="cd-back"],
+    #cd-c1:checked ~ .cd-controls label[for="cd-c1"],
+    #cd-c2:checked ~ .cd-controls label[for="cd-c2"],
+    #cd-c3:checked ~ .cd-controls label[for="cd-c3"],
+    #cd-c4:checked ~ .cd-controls label[for="cd-c4"],
+    #cd-c5:checked ~ .cd-controls label[for="cd-c5"],
+    #cd-c6:checked ~ .cd-controls label[for="cd-c6"],
+    #cd-c7:checked ~ .cd-controls label[for="cd-c7"],
+    #cd-c8:checked ~ .cd-controls label[for="cd-c8"] {
+      border-color: var(--accent); color: var(--accent); background: rgba(232, 197, 71, 0.06);
+    }
+
+    #cd-front:checked  ~ .cd-space .cd-cube { transform: rotateY(0deg); }
+    #cd-left:checked   ~ .cd-space .cd-cube { transform: rotateY(90deg); }
+    #cd-right:checked  ~ .cd-space .cd-cube { transform: rotateY(-90deg); }
+    #cd-bottom:checked ~ .cd-space .cd-cube { transform: rotateX(90deg); }
+    #cd-top:checked    ~ .cd-space .cd-cube { transform: rotateX(-90deg); }
+    #cd-back:checked   ~ .cd-space .cd-cube { transform: rotateY(180deg); }
+    #cd-c1:checked ~ .cd-space .cd-cube { transform: rotateX(-20deg) rotateY(-40deg); }
+    #cd-c2:checked ~ .cd-space .cd-cube { transform: rotateX(-20deg) rotateY(-130deg); }
+    #cd-c3:checked ~ .cd-space .cd-cube { transform: rotateX(-20deg) rotateY(-220deg); }
+    #cd-c4:checked ~ .cd-space .cd-cube { transform: rotateX(-20deg) rotateY(-310deg); }
+    #cd-c5:checked ~ .cd-space .cd-cube { transform: rotateX(20deg) rotateY(-310deg); }
+    #cd-c6:checked ~ .cd-space .cd-cube { transform: rotateX(20deg) rotateY(-220deg); }
+    #cd-c7:checked ~ .cd-space .cd-cube { transform: rotateX(20deg) rotateY(-130deg); }
+    #cd-c8:checked ~ .cd-space .cd-cube { transform: rotateX(20deg) rotateY(-40deg); }
+
+    .cd-space {
+      perspective: 1000px; width: 200px; height: 200px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cd-cube {
+      position: relative; width: 200px; height: 200px;
+      transform-style: preserve-3d;
+      transform: rotateX(-15deg) rotateY(15deg);
+      transition: transform 0.5s ease-in-out;
+    }
+    .cd-cube .cube-face { overflow: hidden; position: absolute; border: 1px solid rgba(240,237,230,0.08); background: transparent; opacity: 0.3; }
+    .cd-cube .cube-face-small { overflow: hidden; position: absolute; border: 1px solid rgba(15,14,13,0.5); opacity: 0.9; }
+
+    .cube-small-1 { background: #7ECBA1; }
+    .cube-small-2 { background: #3FAD7B; }
+    .cube-small-3 { background: #E86FCF; }
+    .cube-small-4 { background: #E85454; }
+    .cube-small-5 { background: #E8C547; }
+    .cube-small-6 { background: #4BBFBF; }
+    .cube-small-7 { background: #5B8DE8; }
+    .cube-small-8 { background: #E8A06F; }
+
+    .cube-small-1.face-front-A { width:100px;height:100px;transform:translate3d(100px,0px,100px); }
+    .cube-small-1.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(100px,50px,50px); }
+    .cube-small-1.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(-50px,0px,150px); }
+    .cube-small-1.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(100px,-50px,50px); }
+    .cube-small-1.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(50px,0px,-50px); }
+    .cube-small-1.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(-100px,0px,0px); }
+
+    .cube-small-2.face-front-A { width:100px;height:100px;transform:translate3d(0px,0px,100px); }
+    .cube-small-2.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(0px,50px,50px); }
+    .cube-small-2.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(-50px,0px,-50px); }
+    .cube-small-2.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(0px,-50px,50px); }
+    .cube-small-2.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(50px,0px,-50px); }
+    .cube-small-2.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(0px,0px,0px); }
+
+    .cube-small-3.face-front-A { width:100px;height:100px;transform:translate3d(0px,100px,100px); }
+    .cube-small-3.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(0px,50px,-50px); }
+    .cube-small-3.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(-50px,100px,-50px); }
+    .cube-small-3.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(0px,-50px,150px); }
+    .cube-small-3.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(50px,100px,-50px); }
+    .cube-small-3.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(0px,100px,0px); }
+
+    .cube-small-4.face-front-A { width:100px;height:100px;transform:translate3d(100px,100px,100px); }
+    .cube-small-4.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(100px,50px,-50px); }
+    .cube-small-4.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(-50px,100px,150px); }
+    .cube-small-4.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(100px,-50px,150px); }
+    .cube-small-4.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(50px,100px,-50px); }
+    .cube-small-4.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(-100px,100px,0px); }
+
+    .cube-small-5.face-front-A { width:100px;height:100px;transform:translate3d(100px,100px,0px); }
+    .cube-small-5.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(100px,-50px,-50px); }
+    .cube-small-5.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(50px,100px,150px); }
+    .cube-small-5.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(100px,50px,150px); }
+    .cube-small-5.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(-50px,100px,-50px); }
+    .cube-small-5.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(-100px,100px,100px); }
+
+    .cube-small-6.face-front-A { width:100px;height:100px;transform:translate3d(0px,100px,0px); }
+    .cube-small-6.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(0px,-50px,-50px); }
+    .cube-small-6.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(50px,100px,-50px); }
+    .cube-small-6.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(0px,50px,150px); }
+    .cube-small-6.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(-50px,100px,-50px); }
+    .cube-small-6.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(0px,100px,100px); }
+
+    .cube-small-7.face-front-A { width:100px;height:100px;transform:translate3d(0px,0px,0px); }
+    .cube-small-7.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(0px,-50px,-50px); }
+    .cube-small-7.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(50px,0px,-50px); }
+    .cube-small-7.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(0px,50px,-50px); }
+    .cube-small-7.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(-50px,0px,-50px); }
+    .cube-small-7.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(0px,0px,100px); }
+
+    .cube-small-8.face-front-A { width:100px;height:100px;transform:translate3d(100px,0px,0px); }
+    .cube-small-8.face-front-B { width:100px;height:100px;transform:rotateX(90deg) translate3d(100px,-50px,-50px); }
+    .cube-small-8.face-front-C { width:100px;height:100px;transform:rotateY(90deg) translate3d(50px,0px,150px); }
+    .cube-small-8.face-front-D { width:100px;height:100px;transform:rotateX(-90deg) translate3d(100px,50px,-50px); }
+    .cube-small-8.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(-50px,0px,-50px); }
+    .cube-small-8.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(-100px,0px,100px); }
+  </style>
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ── Left Nav ─────────────────────────────────── -->
+<nav id="nav">
+  <div class="nav-identity">
+    <div class="name">Jeff Orshalick</div>
+    <div class="role">Staff Growth Designer</div>
+  </div>
+
+  <div class="nav-sections">
+    <div class="nav-group">
+      <div class="nav-item top-level active" data-target="overview">Overview</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Case Study 01</div>
+      <div class="nav-item top-level" data-target="hm-hook">Happy Monday</div>
+      <div class="nav-item sub" data-target="hm-situation">Situation</div>
+      <div class="nav-item sub" data-target="hm-action">Process</div>
+      <div class="nav-item sub" data-target="hm-result">Results</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-group-label">Case Study 02</div>
+      <div class="nav-item top-level" data-target="sf-hook">Secureframe</div>
+      <div class="nav-item sub" data-target="sf-situation">Situation</div>
+      <div class="nav-item sub" data-target="sf-action">Process</div>
+      <div class="nav-item sub" data-target="sf-result">Results</div>
+    </div>
+
+    <div class="nav-group" style="margin-top: 12px;">
+      <div class="nav-item top-level" data-target="closing">Closing</div>
+    </div>
+  </div>
+
+</nav>
+
+<!-- ── Content ────────────────────────────────────── -->
+<main id="main">
+
+  <!-- ══ OVERVIEW ══════════════════════════════════ -->
+  <section id="overview">
+    <div class="kicker">Staff Growth Product Designer — Application</div>
+    <h1 class="display-headline">Design that earns<br>its place in the <em>funnel.</em></h1>
+    <p class="lead">
+      I'm Jeff Orshalick, a Growth and Product designer with 13 years building top-of-funnel and 0-to-1 digital experiences across consumer and fintech products. I specialize in PLG, growth experimentation, and the activation-to-retention loop — and I use AI tools to move faster than the process usually allows.
+    </p>
+
+    <div class="meta-grid">
+      <div class="meta-cell">
+        <div class="label">Currently</div>
+        <div class="value">Principal Consultant · Orshalick Design</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Specialty</div>
+        <div class="value">Growth Design · PLG · Marketing UX</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Focus Areas</div>
+        <div class="value">PLG · Experimentation · Top-of-Funnel · B2C</div>
+      </div>
+      <div class="meta-cell">
+        <div class="label">Years Experience</div>
+        <div class="value">13 years</div>
+      </div>
+    </div>
+
+    <div class="ai-callout">
+      <strong>A note on this presentation:</strong> You're looking at a site designed and built entirely with AI — Claude Code + Paper + Figma — in one session. Not ideation support. Not image generation. Code, layout, copy iteration, and visual polish — all AI-augmented. The medium is intentional: this is how I work.
+    </div>
+  </section>
+
+  <!-- ══ HAPPY MONDAY: HOOK ═════════════════════════ -->
+  <section id="hm-hook">
+    <div class="section-label">Case Study 01 — Happy Monday</div>
+    <h2 class="case-headline">Building a two-sided hiring marketplace from zero — at early stage, with no playbook.</h2>
+    <p class="case-hook">
+      The job board market was broken for small teams. Employers were drowning in unqualified applicants; candidates were ghosted at every stage. We bet we could fix both sides simultaneously.
+    </p>
+    <div class="role-chips">
+      <span class="chip highlight">Co-Founder</span>
+      <span class="chip highlight">Sole Designer</span>
+      <span class="chip">Product Strategy</span>
+      <span class="chip">Brand</span>
+      <span class="chip">Growth</span>
+      <span class="chip">User Research</span>
+    </div>
+
+    <div class="screenshot-grid cols-1">
+      <div class="screenshot-card" onclick="openLightbox('assets/cover.png')">
+        <img src="assets/cover.png" alt="Happy Monday — hero marketing page">
+        <div class="screenshot-caption">Marketing homepage — first impression for job seekers and employers</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HAPPY MONDAY: SITUATION ═══════════════════ -->
+  <section id="hm-situation">
+    <div class="sub-section">
+      <div class="sub-section-header">
+        <span class="star-tag">Situation</span>
+        <h3 class="sub-headline">The market gap we were betting on</h3>
+      </div>
+
+      <p class="body-text">
+        Job boards had commoditized to the point of uselessness. Employers were drowning in unqualified applicants; candidates were ghosted at every stage. The ATS market was dominated by expensive enterprise tools that SMBs couldn't afford or navigate. We saw a gap: a lightweight, beautifully designed hiring platform built for small teams — one that made employers look credible and gave candidates a human experience.
+      </p>
+      <p class="body-text">
+        Under the hood, a culture-fit matching layer called <strong>SAUCE</strong> scored candidates and teams across motivational dimensions — going beyond skills to evaluate what actually makes teams work. But the product's growth challenge was more fundamental: at early stage, design quality had to do the work that paid channels couldn't.
+      </p>
+
+      <div class="process-list">
+        <div class="process-item">
+          <div class="process-num">01</div>
+          <div class="process-content">
+            <div class="process-title">Early-stage constraints</div>
+            <div class="process-desc">Every conversion had to come from product quality and word of mouth — design had to do the work paid channels couldn't yet</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">02</div>
+          <div class="process-content">
+            <div class="process-title">Dual-sided marketplace</div>
+            <div class="process-desc">Had to win employers (who pay) and candidates (who give it value) simultaneously — losing either side collapses the product</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">03</div>
+          <div class="process-content">
+            <div class="process-title">Design as the growth lever</div>
+            <div class="process-desc">In a sea of utilitarian ATS tools, visual quality and brand weren't nice-to-haves — they were the core acquisition and retention strategy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-section-header">
+        <span class="star-tag">Task</span>
+        <h3 class="sub-headline">What I was accountable for</h3>
+      </div>
+
+      <p class="body-text">
+        Design the full product experience end-to-end: marketing site, employer onboarding, job posting flow, candidate-facing listings, and the internal candidate management dashboard — while simultaneously shaping product strategy as a co-founder.
+      </p>
+
+      <div class="screenshot-grid cols-2">
+        <div class="screenshot-card" onclick="openLightbox('assets/1.png')">
+          <img src="assets/1.png" alt="Landing page with social proof">
+          <div class="screenshot-caption">Marketing landing — social proof, trust signals, CTA hierarchy</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-job-page.png')">
+          <img src="assets/hm-job-page.png" alt="Employer-branded job listing page">
+          <div class="screenshot-caption">Candidate-facing job listing — clean employer branding, salary transparency, one-tap apply. This page closed employers.</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-job-dashboard.png')">
+          <img src="assets/hm-job-dashboard.png" alt="Job Dashboard — Candidates view">
+          <div class="screenshot-caption">Job Dashboard — candidate pipeline view from the shipped ATS.</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/3.png')">
+          <img src="assets/3.png" alt="Add a job posting wizard">
+          <div class="screenshot-caption">Job posting wizard — progressive disclosure that reduced cognitive load and got employers to publish faster.</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══ HAPPY MONDAY: ACTION ═══════════════════════ -->
+  <section id="hm-action">
+    <div class="sub-section">
+      <div class="sub-section-header">
+        <span class="star-tag">Action</span>
+        <h3 class="sub-headline">The employer credibility insight changed everything</h3>
+      </div>
+
+      <p class="body-text">
+        I opened with research, not wireframes. 15+ qualitative interviews with SMB hiring managers revealed a finding that reshaped the entire product direction: employers didn't just want to hire efficiently — they wanted to look credible to candidates. The candidate-facing experience wasn't a secondary concern. It was the primary conversion driver.
+      </p>
+
+      <div class="process-list">
+        <div class="process-item">
+          <div class="process-num">01</div>
+          <div class="process-content">
+            <div class="process-title">Discovery — employer credibility as the unlock</div>
+            <div class="process-desc">15+ qualitative interviews with SMB hiring managers revealed the core insight: employers wanted to look credible to candidates, not just post jobs. That reframed the entire design priority.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">02</div>
+          <div class="process-content">
+            <div class="process-title">Candidate-facing job listing — designed to close employers</div>
+            <div class="process-desc">The job listing page became the product's most strategic surface. Employer branding, salary transparency, one-tap apply. Employers saw the demo and converted because their candidates would see quality.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">03</div>
+          <div class="process-content">
+            <div class="process-title">Progressive job-posting wizard</div>
+            <div class="process-desc">Reduced cognitive load of creating a job post from a long form to a multi-step guided flow — progressive disclosure that got employers to complete and publish faster.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">04</div>
+          <div class="process-content">
+            <div class="process-title">Kanban ATS — zero training required</div>
+            <div class="process-desc">Designed a Kanban-style candidate pipeline that employers could use on day one without documentation. Drag-to-move, source tracking, status labels — intuitive by design.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">05</div>
+          <div class="process-content">
+            <div class="process-title">Brand system built in parallel</div>
+            <div class="process-desc">Design tokens, component library, and marketing templates built alongside the product — so engineering could ship without waiting on specs for every edge case.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section" style="margin-top: 0;">
+      <div class="sub-section-header">
+        <span class="star-tag">Brand</span>
+        <h3 class="sub-headline">Standing out in a sea of sterile blue</h3>
+      </div>
+      <p class="body-text">
+        Indeed, LinkedIn, Monster — the entire hiring landscape defaulted to the same safe, employer-first visual language. We made a deliberate choice to go the other direction: bold yellow, candidate-first headline, expressive organic geometry. The brand was a signal to job seekers that this wasn't another faceless job board.
+      </p>
+
+      <div class="screenshot-grid cols-1">
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-brand-exploration.png')">
+          <img src="assets/hm-brand-exploration.png" alt="Happy Monday early brand exploration">
+          <div class="screenshot-caption">Early brand exploration — candidate-first voice, bold visual identity as market differentiation. This direction didn't make it to production, but it shaped the design language that did.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section" style="margin-top: 0;">
+      <div class="sub-section-header">
+        <span class="star-tag">Prototype</span>
+        <h3 class="sub-headline">How do you visualize culture fit?</h3>
+      </div>
+      <p class="body-text">
+        Our culture quiz scored candidates and companies across multiple motivational dimensions — but a flat results screen felt like it was underselling the insight. I wanted something that conveyed multidimensionality: that culture fit isn't a single score, it's a shape. That led to an exploration of the Culture Cube — each face representing a different dimension, rotatable to reveal how a candidate or company mapped across all of them.
+      </p>
+      <p class="body-text">
+        The implementation: a pure CSS cube with no JavaScript — state driven entirely by <code style="font-family: monospace; font-size: 13px; color: var(--accent); background: rgba(232,197,71,0.08); padding: 2px 6px;">input:checked ~ </code> sibling selectors. Click any face or corner to rotate.
+      </p>
+      <p class="body-text" style="color: var(--muted); font-size: 13px; margin-top: -8px;">
+        <em>(It didn't ship. Sometimes the most creative solution is the one the PM looks at and says "but why." This was one of those times. The idea lived on as a conversation piece.)</em>
+      </p>
+
+      <div class="cube-demo">
+        <input type="radio" id="cd-front"  name="cd-face">
+        <input type="radio" id="cd-left"   name="cd-face">
+        <input type="radio" id="cd-right"  name="cd-face">
+        <input type="radio" id="cd-top"    name="cd-face">
+        <input type="radio" id="cd-bottom" name="cd-face">
+        <input type="radio" id="cd-back"   name="cd-face">
+        <input type="radio" id="cd-c1" name="cd-face">
+        <input type="radio" id="cd-c2" name="cd-face">
+        <input type="radio" id="cd-c3" name="cd-face">
+        <input type="radio" id="cd-c4" name="cd-face">
+        <input type="radio" id="cd-c5" name="cd-face">
+        <input type="radio" id="cd-c6" name="cd-face">
+        <input type="radio" id="cd-c7" name="cd-face">
+        <input type="radio" id="cd-c8" name="cd-face">
+
+        <div class="cd-controls">
+          <div class="cd-group-label">Faces</div>
+          <div class="cd-btn-row">
+            <label class="cd-btn" for="cd-front">Front</label>
+            <label class="cd-btn" for="cd-left">Left</label>
+            <label class="cd-btn" for="cd-right">Right</label>
+            <label class="cd-btn" for="cd-top">Top</label>
+            <label class="cd-btn" for="cd-bottom">Bottom</label>
+            <label class="cd-btn" for="cd-back">Back</label>
+          </div>
+          <div class="cd-group-label" style="margin-top: 6px;">Corners</div>
+          <div class="cd-btn-row">
+            <label class="cd-btn" for="cd-c1">1</label>
+            <label class="cd-btn" for="cd-c2">2</label>
+            <label class="cd-btn" for="cd-c3">3</label>
+            <label class="cd-btn" for="cd-c4">4</label>
+            <label class="cd-btn" for="cd-c5">5</label>
+            <label class="cd-btn" for="cd-c6">6</label>
+            <label class="cd-btn" for="cd-c7">7</label>
+            <label class="cd-btn" for="cd-c8">8</label>
+          </div>
+        </div>
+
+        <div class="cd-space">
+          <div class="cd-cube">
+            <div class="cube-face face-front"></div>
+            <div class="cube-face face-top"></div>
+            <div class="cube-face face-bottom"></div>
+            <div class="cube-face face-left"></div>
+            <div class="cube-face face-right"></div>
+            <div class="cube-face face-back"></div>
+
+            <div class="cube-face-small cube-small-1 face-front-A"></div>
+            <div class="cube-face-small cube-small-1 face-front-B"></div>
+            <div class="cube-face-small cube-small-1 face-front-C"></div>
+            <div class="cube-face-small cube-small-1 face-front-D"></div>
+            <div class="cube-face-small cube-small-1 face-front-E"></div>
+            <div class="cube-face-small cube-small-1 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-2 face-front-A"></div>
+            <div class="cube-face-small cube-small-2 face-front-B"></div>
+            <div class="cube-face-small cube-small-2 face-front-C"></div>
+            <div class="cube-face-small cube-small-2 face-front-D"></div>
+            <div class="cube-face-small cube-small-2 face-front-E"></div>
+            <div class="cube-face-small cube-small-2 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-3 face-front-A"></div>
+            <div class="cube-face-small cube-small-3 face-front-B"></div>
+            <div class="cube-face-small cube-small-3 face-front-C"></div>
+            <div class="cube-face-small cube-small-3 face-front-D"></div>
+            <div class="cube-face-small cube-small-3 face-front-E"></div>
+            <div class="cube-face-small cube-small-3 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-4 face-front-A"></div>
+            <div class="cube-face-small cube-small-4 face-front-B"></div>
+            <div class="cube-face-small cube-small-4 face-front-C"></div>
+            <div class="cube-face-small cube-small-4 face-front-D"></div>
+            <div class="cube-face-small cube-small-4 face-front-E"></div>
+            <div class="cube-face-small cube-small-4 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-5 face-front-A"></div>
+            <div class="cube-face-small cube-small-5 face-front-B"></div>
+            <div class="cube-face-small cube-small-5 face-front-C"></div>
+            <div class="cube-face-small cube-small-5 face-front-D"></div>
+            <div class="cube-face-small cube-small-5 face-front-E"></div>
+            <div class="cube-face-small cube-small-5 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-6 face-front-A"></div>
+            <div class="cube-face-small cube-small-6 face-front-B"></div>
+            <div class="cube-face-small cube-small-6 face-front-C"></div>
+            <div class="cube-face-small cube-small-6 face-front-D"></div>
+            <div class="cube-face-small cube-small-6 face-front-E"></div>
+            <div class="cube-face-small cube-small-6 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-7 face-front-A"></div>
+            <div class="cube-face-small cube-small-7 face-front-B"></div>
+            <div class="cube-face-small cube-small-7 face-front-C"></div>
+            <div class="cube-face-small cube-small-7 face-front-D"></div>
+            <div class="cube-face-small cube-small-7 face-front-E"></div>
+            <div class="cube-face-small cube-small-7 face-front-F"></div>
+
+            <div class="cube-face-small cube-small-8 face-front-A"></div>
+            <div class="cube-face-small cube-small-8 face-front-B"></div>
+            <div class="cube-face-small cube-small-8 face-front-C"></div>
+            <div class="cube-face-small cube-small-8 face-front-D"></div>
+            <div class="cube-face-small cube-small-8 face-front-E"></div>
+            <div class="cube-face-small cube-small-8 face-front-F"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section" style="margin-top: 56px;">
+      <div class="sub-section-header">
+        <span class="star-tag">Growth</span>
+        <h3 class="sub-headline">Structured channel bets at early stage</h3>
+      </div>
+
+      <p class="body-text">
+        At early stage, every growth decision had to be deliberate. We ran a full Bullseye channel evaluation — scoring all 19 traction channels on likely impact vs. effort — and narrowed to a focused inner ring to test. The framework pointed to <strong>Social/Display Ads</strong> as the primary bet.
+      </p>
+
+      <div class="screenshot-grid cols-1" style="margin-top: 24px;">
+        <div class="screenshot-card" onclick="openLightbox('assets/traction-whiteboard.jpg')">
+          <img src="assets/traction-whiteboard.jpg" alt="Traction channel brainstorm whiteboard">
+          <div class="screenshot-caption">Bullseye exercise — 19 channels evaluated, scored on impact vs. effort, inner ring identified</div>
+        </div>
+      </div>
+
+      <p class="body-text" style="margin-top: 32px;">
+        I owned the creative execution end-to-end. The campaign led with humor and a candidate-first voice — a deliberate departure from every other hiring platform's visual language. Ads drove qualified traffic. The key learning: <strong>top-of-funnel acquisition was solvable. The harder problem was activation — free signups were extremely difficult to convert to paid.</strong> That insight would have reshaped the onboarding design if we'd had more runway.
+      </p>
+
+      <div class="screenshot-grid cols-3" style="margin-top: 16px;">
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-ad-01.png')">
+          <img src="assets/hm-ad-01.png" alt="Happy Monday Instagram ad — fire coals">
+          <div class="screenshot-caption">Fire coals — "There are better ways to hire." Candidate empathy as the hook.</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-ad-02.png')">
+          <img src="assets/hm-ad-02.png" alt="Happy Monday Instagram ad — juggling plates">
+          <div class="screenshot-caption">Juggling plates — same message, different visual metaphor. A/B color variant.</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-ad-tgim.png')">
+          <img src="assets/hm-ad-tgim.png" alt="Happy Monday Instagram ad — TGIM">
+          <div class="screenshot-caption">TGIM — "Thank God It's Monday." The brand name as the punchline. The brand name as the punchline — it explained itself.</div>
+        </div>
+      </div>
+
+      <div class="screenshot-grid cols-3" style="margin-top: 12px;">
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-ad-cowboy.png')">
+          <img src="assets/hm-ad-cowboy.png" alt="Happy Monday Instagram ad — Right cowboy, wrong rodeo">
+          <div class="screenshot-caption">"Right cowboy. Wrong rodeo." Culture fit series — cowboy riding the office printer.</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-ad-captain.png')">
+          <img src="assets/hm-ad-captain.png" alt="Happy Monday Instagram ad — Right captain, wrong ship">
+          <div class="screenshot-caption">"Right captain. Wrong ship." Pirate presenting a treasure map to a baffled team. Same brief, escalating absurdity.</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/hm-ad-clown.png')">
+          <img src="assets/hm-ad-clown.png" alt="Happy Monday Instagram ad — Right clown, wrong circus">
+          <div class="screenshot-caption">"Right clown. Wrong circus." Culture fit as the problem. A completely different brief, same brand voice.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ HAPPY MONDAY: RESULTS ══════════════════════ -->
+  <section id="hm-result">
+    <div class="sub-section-header">
+      <span class="star-tag">Result</span>
+      <h3 class="sub-headline">Paying employers. Thesis validated — then COVID.</h3>
+    </div>
+
+    <p class="body-text">
+      Happy Monday launched and attracted paying employer customers with no paid acquisition. The employer credibility hypothesis held: employers cited the quality of the candidate-facing pages as the reason they chose us over Indeed. The growth loop was working. Then COVID froze the hiring market. We ran out of runway before it came back — not because the thesis was wrong, but because the market disappeared.
+    </p>
+
+    <div class="metrics-grid">
+      <div class="metric-cell">
+        <div class="metric-number">10</div>
+        <div class="metric-label">Paying employer customers — acquired organically</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">10</div>
+        <div class="metric-label">Person team built around the product</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">8mo</div>
+        <div class="metric-label">ATS live and iterating — COVID froze the market before we could scale</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">6wk</div>
+        <div class="metric-label">To validate the employer credibility hypothesis</div>
+      </div>
+    </div>
+
+    <div class="screenshot-grid cols-1" style="margin-top: 32px;">
+      <div class="screenshot-card" onclick="openLightbox('assets/hm-job-dashboard.png')">
+        <img src="assets/hm-job-dashboard.png" alt="Job Dashboard — Candidates view">
+        <div class="screenshot-caption">Job Dashboard — candidate pipeline view from the shipped ATS.</div>
+      </div>
+    </div>
+
+    <p class="body-text" style="margin-top: 32px;">
+      <strong>Key learning carried forward:</strong> In a two-sided marketplace, the experience of the non-paying user is often the most powerful lever for converting the paying user. Design for the person who doesn't open their wallet — and the person who does will follow.
+    </p>
+
+  </section>
+
+  <!-- ══ SECUREFRAME: HOOK ══════════════════════════ -->
+  <section id="sf-hook">
+    <div class="section-label">Case Study 02 — Secureframe</div>
+    <h2 class="case-headline">Customers were losing deals because they couldn't prove trust. I fixed that.</h2>
+    <p class="case-hook">
+      Secureframe's customers had no standard way to share compliance documentation with prospects. Notion pages, email threads, repeated CSM requests — none of it was working. I led the design of the Trust Center from zero to launch in 8 weeks.
+    </p>
+    <div class="role-chips">
+      <span class="chip highlight">Lead Designer</span>
+      <span class="chip highlight">End-to-End</span>
+      <span class="chip">PLG Strategy</span>
+      <span class="chip">User Research</span>
+      <span class="chip">0→1 Product Design</span>
+    </div>
+
+    <div class="screenshot-grid cols-1" style="margin-top: 32px;">
+      <div class="screenshot-card" onclick="openLightbox('assets/sf-trust-center-polished.png')">
+        <img src="assets/sf-trust-center-polished.png" alt="Secureframe Trust Center — full public page">
+        <div class="screenshot-caption">The Trust Center — a branded, self-serve compliance hub. Compliance status, documents, monitoring, and subprocessors in one shareable link.</div>
+      </div>
+    </div>
+
+    <div class="ai-callout" style="margin-top: 24px;">
+      <strong>Why this is a B2C problem:</strong> Secureframe is B2B SaaS — but the Trust Center's design challenge is structurally identical to B2C top-of-funnel. A cold prospect lands on a page and needs to feel enough trust to move forward. Same conversion problem, different domain. Same design tools apply.
+    </div>
+  </section>
+
+  <!-- ══ SECUREFRAME: SITUATION ════════════════════ -->
+  <section id="sf-situation">
+    <div class="sub-section">
+      <div class="sub-section-header">
+        <span class="star-tag">Situation</span>
+        <h3 class="sub-headline">A compliance platform losing deals over a documentation gap</h3>
+      </div>
+
+      <p class="body-text">
+        Secureframe automates SOC 2, ISO 27001, and other compliance frameworks. As the customer base matured, a painful pattern emerged: customers were being asked by their own prospects for audit reports, certifications, and policies — and had no standard way to share them.
+      </p>
+      <p class="body-text">
+        Some resorted to Notion pages or email threads. None of it met security or branding expectations. Internally, this meant delays, repetitive CSM work, and lost enterprise deals. <strong>The product was letting customers down at the exact moment trust mattered most.</strong>
+      </p>
+
+      <div class="process-list">
+        <div class="process-item">
+          <div class="process-num">01</div>
+          <div class="process-content">
+            <div class="process-title">Customer friction</div>
+            <div class="process-desc">Prospects asking for compliance docs mid-deal created delays that killed momentum — and Secureframe had no tool to help customers respond professionally</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">02</div>
+          <div class="process-content">
+            <div class="process-title">Internal support burden</div>
+            <div class="process-desc">CSMs were fielding repetitive requests to help customers share the same documents over and over — hours of manual effort every week</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">03</div>
+          <div class="process-content">
+            <div class="process-title">Upmarket ambition</div>
+            <div class="process-desc">Leadership wanted to move Secureframe into larger enterprise deals — a market segment that would never accept ad-hoc document sharing</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section">
+      <div class="sub-section-header">
+        <span class="star-tag">Task</span>
+        <h3 class="sub-headline">What I owned</h3>
+      </div>
+      <p class="body-text">
+        I led end-to-end design of the Trust Center — a branded, self-serve destination where customers could share audit status, policies, and FAQs with prospects via a simple link. I was accountable from concept through research, prototyping, and launch, working closely with one PM and five engineers, with regular input from CS and sales leadership.
+      </p>
+      <p class="body-text">
+        Scope: MVP within <strong>8 weeks</strong>. I ran interviews, facilitated ideation, owned all design and UX decisions, and helped shape rollout and positioning.
+      </p>
+
+      <table class="ownership-table">
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>What I owned</th>
+            <th>With whom</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Research</td>
+            <td>Customer + CSM interviews, synthesis, problem framing</td>
+            <td>CS leadership, sales</td>
+          </tr>
+          <tr>
+            <td>Scoping</td>
+            <td>MVP definition — cut tabs, CRM, deep customization to ship a focused core</td>
+            <td>PM</td>
+          </tr>
+          <tr>
+            <td>Design</td>
+            <td>All UX decisions, visual design, prototyping, iteration</td>
+            <td>5 engineers</td>
+          </tr>
+          <tr>
+            <td>PLG strategy</td>
+            <td>Pre-launch deal seeding experiment with sales team</td>
+            <td>Sales, PM</td>
+          </tr>
+          <tr>
+            <td>Launch</td>
+            <td>Rollout planning, positioning, success metrics</td>
+            <td>PM, CS</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══ SECUREFRAME: ACTION ════════════════════════ -->
+  <section id="sf-action">
+    <div class="sub-section">
+      <div class="sub-section-header">
+        <span class="star-tag">Action</span>
+        <h3 class="sub-headline">How I designed it — and the bets I made</h3>
+      </div>
+
+      <p class="body-text">
+        I opened with validation, not wireframes. The risk wasn't design execution — it was building the wrong thing. So I started by confirming the problem was real enough to solve fast.
+      </p>
+
+      <div class="process-list">
+        <div class="process-item">
+          <div class="process-num">01</div>
+          <div class="process-content">
+            <div class="process-title">Discovery — customer and CSM interviews</div>
+            <div class="process-desc">Interviewed customers who had lost or nearly lost deals due to compliance sharing friction. Validated with CSMs who were absorbing the support load. The pattern was consistent and costly.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">02</div>
+          <div class="process-content">
+            <div class="process-title">Scoping to MVP — ruthless prioritization</div>
+            <div class="process-desc">Identified the minimum surface to deliver real value: branded page, document upload, real-time framework status, access control (public vs. email gate). Cut tabs, cut customization depth, cut CRM — shipped a focused core.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">03</div>
+          <div class="process-content">
+            <div class="process-title">Design — polish as a core feature</div>
+            <div class="process-desc">The Trust Center's value proposition was credibility. So visual quality wasn't optional — it was the product. Focused on clean layout, clear hierarchy, and an experience that made customers look more professional than their competitors.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">04</div>
+          <div class="process-content">
+            <div class="process-title">Testing — simplified through iteration</div>
+            <div class="process-desc">Early prototypes had tabs. Testing revealed users didn't need them — a single-page layout with clear sections scanned faster and required less explanation. Removed tabs. Added access control toggles. Final flow: ready to share in minutes, no engineering setup.</div>
+          </div>
+        </div>
+        <div class="process-item">
+          <div class="process-num">05</div>
+          <div class="process-content">
+            <div class="process-title">PLG experiment — pre-launch deal seeding</div>
+            <div class="process-desc">Hypothesized that sales could use in-progress Trust Center previews as a closing tool before GA. Tested with 3 enterprise deals before launch — kept reading below.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="screenshot-grid cols-2" style="margin-top: 32px;">
+        <div class="screenshot-card" onclick="openLightbox('assets/sf-trust-center-light.png')">
+          <img src="assets/sf-trust-center-light.png" alt="Trust Center public page — light theme">
+          <div class="screenshot-caption">Public Trust Center — what a prospect sees when a customer shares the link</div>
+        </div>
+        <div class="screenshot-card" onclick="openLightbox('assets/sf-trust-center-admin.png')">
+          <img src="assets/sf-trust-center-admin.png" alt="Trust Center admin — WYSIWYG editor">
+          <div class="screenshot-caption">Admin WYSIWYG — customers configure brand, content, and access controls, then publish in one click</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sub-section" style="margin-top: 0;">
+      <div class="sub-section-header">
+        <span class="star-tag">PLG Experiment</span>
+        <h3 class="sub-headline">We tested the hypothesis before we shipped the product</h3>
+      </div>
+      <p class="body-text">
+        Before GA, I ran a structured pre-launch experiment with the sales team: could an in-progress Trust Center preview close deals? The hypothesis was that prospects cared more about <em>seeing</em> the Trust Center than having it fully built — trust is a signal, not a feature set.
+      </p>
+      <p class="body-text">
+        We seeded 3 live enterprise deals with early-access previews. Sales used them in final-stage calls as a differentiator. All 3 closed. Each prospect cited the Trust Center specifically.
+      </p>
+      <div class="metrics-grid" style="margin-top: 24px;">
+        <div class="metric-cell">
+          <div class="metric-number">3/3</div>
+          <div class="metric-label">Pre-launch deals closed using Trust Center previews</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-number">Pre-GA</div>
+          <div class="metric-label">Evidence of product-market fit before launch day</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-number">0 days</div>
+          <div class="metric-label">Wait time to validate the growth hypothesis</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SECUREFRAME: RESULTS ═══════════════════════ -->
+  <section id="sf-result">
+    <div class="sub-section-header">
+      <span class="star-tag">Result</span>
+      <h3 class="sub-headline">Exceeded every target — before and after launch</h3>
+    </div>
+
+    <p class="body-text">
+      The Trust Center launched on schedule and outperformed its success metrics across the board. Adoption hit our 3-month target in 2 months. The PLG experiment produced deal influence before GA. And the feature secured additional investment for a second phase.
+    </p>
+
+    <div class="metrics-grid">
+      <div class="metric-cell">
+        <div class="metric-number">3</div>
+        <div class="metric-label">Enterprise deals closed pre-launch using Trust Center previews</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">9</div>
+        <div class="metric-label">Total deals directly influenced within 30 days of launch</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">30%</div>
+        <div class="metric-label">Customer adoption in 2 months — vs. 20% goal in 3 months</div>
+      </div>
+      <div class="metric-cell">
+        <div class="metric-number">3–6h</div>
+        <div class="metric-label">Weekly CSM hours saved on repetitive document sharing</div>
+      </div>
+    </div>
+
+    <p class="body-text" style="margin-top: 24px;">
+      The Trust Center became a foundational piece of Secureframe's upmarket strategy — not just a feature, but proof that product-led growth could work in compliance software. It secured a second investment round to build CRM integration, usage analytics, and deeper customization.
+    </p>
+
+
+    <p class="body-text">
+      <strong>Why this maps to consumer fintech:</strong> Trust is the primary conversion lever in fintech. A consumer deciding whether to link their bank account, share their financial data, or hand over a credit card number is making the same calculation Secureframe's prospects were making. The Trust Center playbook — design credibility as a feature, validate the hypothesis before you ship, measure early — is directly transferable to activation and onboarding flows in financial products.
+    </p>
+  </section>
+
+  <!-- ══ CLOSING ════════════════════════════════════ -->
+  <section id="closing">
+    <div class="kicker">Why This Role · Why Now</div>
+    <h2 class="case-headline">I design the path between<br>curiosity and commitment.</h2>
+
+    <p class="lead">
+      Consumer fintech is where trust, activation, and retention are the hardest design problems — and the highest leverage ones. That's the work I want to do, at Staff level, with the autonomy to drive growth decisions from the design layer up.
+    </p>
+
+    <div class="closing-grid">
+      <div class="closing-col">
+        <div class="label">What I bring</div>
+        <ul>
+          <li>PLG experimentation mindset — design the loop, not just the page</li>
+          <li>Consumer and fintech-adjacent experience — eBay, Walmart, RetailMeNot, Sift (fraud detection), Happy Monday</li>
+          <li>Proven growth outcomes: 40% reduction in time to first sale, 15% seller retention lift, 30% product adoption in 60 days</li>
+          <li>Cross-functional leadership — aligned stakeholders across product, eng, sales, and CS at multiple companies</li>
+          <li>AI-augmented workflow — Claude Code, Figma, Paper — compressing the distance from idea to artifact</li>
+        </ul>
+      </div>
+      <div class="closing-col">
+        <div class="label">Questions I'm excited to ask</div>
+        <ul>
+          <li>Where in the activation or onboarding funnel is the biggest drop-off today?</li>
+          <li>How does the team currently run growth experiments — and where does design influence the hypothesis?</li>
+          <li>What does a win look like for this role in the first 90 days?</li>
+          <li>How is the team thinking about AI's role in personalization and experimentation at scale?</li>
+        </ul>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="ai-callout" style="max-width: 520px;">
+      <strong>Thank you.</strong> This presentation was built with Claude Code + Paper + Figma — a live demonstration of the AI-augmented workflow I'd bring to this role. Happy to walk through the build process if helpful.
+    </div>
+  </section>
+
+</main>
+
+<!-- Lightbox -->
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- Present toggle -->
+<button class="present-btn" id="present-btn" onclick="togglePresentation()">&#x25B6; Present</button>
+
+<!-- Slide navigation (presentation mode only) -->
+<button class="slide-nav-btn prev" onclick="prevSlide()">&#x2190;</button>
+<button class="slide-nav-btn next" onclick="nextSlide()">&#x2192;</button>
+<div class="slide-counter" id="slide-counter"></div>
+
+<!-- Keyboard hint -->
+<div class="kbd-hint">
+  <kbd>J</kbd> / <kbd>K</kbd> navigate &nbsp; <kbd>P</kbd> present &nbsp; <kbd>Esc</kbd> close
+</div>
+
+<script>
+  // ── Section IDs in order ──
+  const sectionIds = [
+    'overview',
+    'hm-hook', 'hm-situation', 'hm-action', 'hm-result',
+    'sf-hook', 'sf-situation', 'sf-action', 'sf-result',
+    'closing'
+  ];
+
+  // ── Intersection Observer for reveal animations ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+  // ── Active nav tracking via scroll ──
+  const mainEl = document.getElementById('main');
+  const navItems = document.querySelectorAll('.nav-item[data-target]');
+
+  function setActiveNav(id) {
+    navItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.target === id);
+    });
+  }
+
+  const sfSections = new Set(['sf-hook', 'sf-situation', 'sf-action', 'sf-result']);
+  let currentActiveSectionId = sectionIds[0];
+
+  const scrollObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        currentActiveSectionId = entry.target.id;
+        setActiveNav(entry.target.id);
+        document.body.classList.toggle('secureframe-active', sfSections.has(entry.target.id));
+        document.body.classList.toggle('closing-active', entry.target.id === 'closing' || entry.target.id === 'overview');
+        sessionStorage.setItem('activeSectionId', entry.target.id);
+      }
+    });
+  }, { root: mainEl, rootMargin: '0px 0px -75% 0px', threshold: 0 });
+
+  document.querySelectorAll('section[id]').forEach(s => scrollObserver.observe(s));
+
+  // ── Restore scroll position on load ──
+  const savedSectionId = sessionStorage.getItem('activeSectionId');
+  if (savedSectionId) {
+    const savedSection = document.getElementById(savedSectionId);
+    if (savedSection) savedSection.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }
+
+  // ── Nav click → scroll ──
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const target = document.getElementById(item.dataset.target);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  // ── Lightbox ──
+  function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('open');
+  }
+
+  // ── Presentation Mode ──────────────────────────
+  let slides = [];
+  let presentationActive = false;
+  let currentPresentSlide = 0;
+
+  function buildSlides() {
+    slides = Array.from(document.querySelectorAll('section:not(:has(.sub-section)), .sub-section'));
+    slides.forEach((el, i) => el.setAttribute('data-slide', i));
+  }
+
+  function showSlide(idx) {
+    slides.forEach(el => el.classList.remove('slide-active'));
+    currentPresentSlide = Math.max(0, Math.min(idx, slides.length - 1));
+    const slide = slides[currentPresentSlide];
+    if (slide) {
+      slide.classList.add('slide-active');
+      slide.scrollTop = 0;
+      const isSF = slide.id ? sfSections.has(slide.id) : slide.closest('#sf-hook, #sf-situation, #sf-action, #sf-result') !== null;
+      document.body.classList.toggle('secureframe-active', isSF);
+    }
+    document.getElementById('slide-counter').textContent =
+      `${currentPresentSlide + 1} / ${slides.length}`;
+  }
+
+  function getSlidIdxForSection(sectionId) {
+    const idx = slides.findIndex(slide => {
+      if (slide.id === sectionId) return true;
+      const parent = slide.closest('section');
+      return parent && parent.id === sectionId;
+    });
+    return idx >= 0 ? idx : 0;
+  }
+
+  function enterPresentation() {
+    if (!slides.length) buildSlides();
+    presentationActive = true;
+    document.body.classList.add('presentation-mode');
+    document.getElementById('present-btn').textContent = '✕ Exit';
+    showSlide(getSlidIdxForSection(currentActiveSectionId));
+  }
+
+  function exitPresentation() {
+    presentationActive = false;
+    document.body.classList.remove('presentation-mode');
+    slides.forEach(el => el.classList.remove('slide-active'));
+    document.getElementById('present-btn').textContent = '▶ Present';
+    // Scroll back to the section active in presentation
+    const activeSlide = slides[currentPresentSlide];
+    if (activeSlide) {
+      const section = activeSlide.closest('section') || activeSlide;
+      section.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
+  }
+
+  function togglePresentation() {
+    if (presentationActive) exitPresentation();
+    else enterPresentation();
+  }
+
+  function nextSlide() {
+    if (presentationActive) showSlide(currentPresentSlide + 1);
+  }
+
+  function prevSlide() {
+    if (presentationActive) showSlide(currentPresentSlide - 1);
+  }
+
+  // ── Keyboard nav ──
+  let currentSectionIdx = 0;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (presentationActive) { exitPresentation(); return; }
+      closeLightbox();
+      return;
+    }
+
+    if (e.key === 'p' || e.key === 'P') {
+      togglePresentation();
+      return;
+    }
+
+    if (presentationActive) {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'j' || e.key === 'J') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'k' || e.key === 'K') {
+        e.preventDefault();
+        prevSlide();
+      }
+      return;
+    }
+
+    // Website mode section navigation
+    if (e.key === 'j' || e.key === 'J' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      currentSectionIdx = Math.min(currentSectionIdx + 1, sectionIds.length - 1);
+    } else if (e.key === 'k' || e.key === 'K' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      currentSectionIdx = Math.max(currentSectionIdx - 1, 0);
+    } else {
+      return;
+    }
+
+    const target = document.getElementById(sectionIds[currentSectionIdx]);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setActiveNav(sectionIds[currentSectionIdx]);
+    }
+  });
+
+  // sync keyboard index when user scrolls manually
+  const syncObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = sectionIds.indexOf(entry.target.id);
+        if (idx !== -1) currentSectionIdx = idx;
+      }
+    });
+  }, { root: mainEl, threshold: 0.5 });
+
+  document.querySelectorAll('section[id]').forEach(s => syncObserver.observe(s));
+
+  // ── Metric count-up animation ──────────────────
+  function animateMetric(el) {
+    const raw = el.textContent.trim();
+    // Extract leading number, preserve suffix (%, x, mo, wk, etc.)
+    const match = raw.match(/^(\d+(?:\.\d+)?)(.*)/);
+    if (!match) return;
+    const target = parseFloat(match[1]);
+    const suffix = match[2];
+    const duration = 900;
+    const start = performance.now();
+    const isFloat = match[1].includes('.');
+
+    function step(now) {
+      const elapsed = Math.min(now - start, duration);
+      const progress = 1 - Math.pow(1 - elapsed / duration, 3); // ease-out cubic
+      const current = target * progress;
+      el.textContent = (isFloat ? current.toFixed(1) : Math.floor(current)) + suffix;
+      if (elapsed < duration) requestAnimationFrame(step);
+      else el.textContent = raw;
+    }
+    requestAnimationFrame(step);
+  }
+
+  const metricObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !entry.target.dataset.animated) {
+        entry.target.dataset.animated = '1';
+        animateMetric(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  document.querySelectorAll('.metric-number').forEach(el => metricObserver.observe(el));
+</script>
+</body>
+</html>
