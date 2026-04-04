@@ -1069,6 +1069,29 @@
     .bar-hamburger.open span:nth-child(2) { opacity: 0; }
     .bar-hamburger.open span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); background: var(--accent); }
 
+    .bar-identity {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .bar-name {
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+    }
+
+    .bar-role {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 400;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
     /* ── Mobile Nav Toggle ────────────────────────── */
     .nav-toggle {
       display: none;
@@ -1116,6 +1139,7 @@
       .mobile-bar { display: flex; }
       .nav-toggle { display: none; }
       .present-btn { display: none; }
+      .nav-identity { display: none; }
 
       nav {
         position: fixed;
@@ -1202,6 +1226,10 @@
   <button class="bar-hamburger" id="bar-hamburger" onclick="toggleNav()" aria-label="Toggle navigation">
     <span></span><span></span><span></span>
   </button>
+  <div class="bar-identity">
+    <span class="bar-name">Jeff Orshalick</span>
+    <span class="bar-role">Staff Growth Designer</span>
+  </div>
 </div>
 
 <button class="nav-toggle" id="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">
