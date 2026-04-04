@@ -1017,6 +1017,58 @@
     .cube-small-8.face-front-E { width:100px;height:100px;transform:rotateY(-90deg) translate3d(-50px,0px,-50px); }
     .cube-small-8.face-front-F { width:100px;height:100px;transform:rotateY(180deg) translate3d(-100px,0px,100px); }
 
+    /* ── Mobile Top Bar ──────────────────────────── */
+    .mobile-bar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 52px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      z-index: 150;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+    }
+
+    .bar-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .bar-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+    .bar-hamburger {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+    }
+    .bar-hamburger span {
+      display: block;
+      width: 16px;
+      height: 1px;
+      background: var(--muted);
+      transition: transform 0.2s, opacity 0.2s, background 0.2s;
+    }
+    .bar-hamburger.open span:nth-child(1) { transform: translateY(5px) rotate(45deg); background: var(--accent); }
+    .bar-hamburger.open span:nth-child(2) { opacity: 0; }
+    .bar-hamburger.open span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); background: var(--accent); }
+
     /* ── Mobile Nav Toggle ────────────────────────── */
     .nav-toggle {
       display: none;
@@ -1061,11 +1113,15 @@
 
     /* ── Responsive ───────────────────────────────── */
     @media (max-width: 900px) {
+      .mobile-bar { display: flex; }
+      .nav-toggle { display: none; }
+      .present-btn { display: none; }
+
       nav {
         position: fixed;
         left: calc(-1 * var(--nav-w));
-        top: 0;
-        height: 100vh;
+        top: 52px;
+        height: calc(100vh - 52px);
         z-index: 10;
         transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: none;
@@ -1076,9 +1132,9 @@
         box-shadow: 4px 0 40px rgba(0,0,0,0.5);
       }
 
-      .nav-toggle { display: flex; }
+      .nav-overlay { top: 52px; }
 
-      main { width: 100%; }
+      main { width: 100%; padding-top: 52px; }
 
       .present-btn { top: 16px; right: 16px; }
 
@@ -1140,6 +1196,15 @@
 <body>
 <div class="grain" aria-hidden="true"></div>
 <div class="nav-overlay" id="nav-overlay" onclick="closeNav()"></div>
+
+<!-- ── Mobile Top Bar ─────────────────────────────── -->
+<div class="mobile-bar" id="mobile-bar">
+  <button class="bar-hamburger" id="bar-hamburger" onclick="toggleNav()" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <button class="bar-btn" onclick="togglePresentation()">&#x25B6; Present</button>
+</div>
+
 <button class="nav-toggle" id="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">
   <span></span><span></span><span></span>
 </button>
@@ -2105,12 +2170,14 @@
     document.getElementById('nav').classList.add('open');
     document.getElementById('nav-overlay').classList.add('open');
     document.getElementById('nav-toggle').classList.add('open');
+    document.getElementById('bar-hamburger').classList.add('open');
   }
 
   function closeNav() {
     document.getElementById('nav').classList.remove('open');
     document.getElementById('nav-overlay').classList.remove('open');
     document.getElementById('nav-toggle').classList.remove('open');
+    document.getElementById('bar-hamburger').classList.remove('open');
   }
 
   function toggleNav() {
